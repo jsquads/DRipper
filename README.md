@@ -37,8 +37,8 @@ Unauthorized use of this tool may be illegal and could result in criminal prosec
 
 1. **Clone or download this repository**
    ```bash
-   git clone https://github.com/yourusername/ddos-ripper.git
-   cd ddos-ripper
+   git clone https://github.com/yourusername/DRipper.git
+   cd DRipper
    ```
 
 2. **Verify Python installation**
